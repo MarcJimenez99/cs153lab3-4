@@ -77,6 +77,19 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+  case T_PGFLT:
+    uint faultAddr = rcr2();
+    uint numPages = myproc()->stacksz + 1;
+    uint pgdir = myproc()->pgdir;
+    if (faultAddr >= KERNBASE2 - ((PGSIZE*numPages) + 1)) {
+      if(allocuvm(pgdir, PGROUNDDOWN(faultAddr), PGROUNDDOWN(faultAddr) + 1) == 0) {
+	cprintf("allocuvm: Error fault address\n");
+        break;
+      }
+      myproc()->stackSize = myproc()->stackSize + 1;
+      cprintf("Increased stack size\n");
+      break;
+    }
 
   //PAGEBREAK: 13
   default:
