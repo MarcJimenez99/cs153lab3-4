@@ -1,3 +1,22 @@
+# CS153 Lab 3 (Changing Memory Layout and Growing the Stack)
+## Lab 3 - Changing Memory Layout and Growing the Stack
+### a) Changing Memory Layout
+
+Currently the xv6 address space is set up as: CODE --> STACK --> HEAP, where the stack is fixed in size
+and the heap grows toward the high-end of the address space. We are going to change it where the address
+space is: CODE --> HEAP --> STACK. 
+
+In order make this change we need to alter the way xv6 loads the program into memory and sets up the page
+table. This happens in `
+
+
+
+
+
+
+
+
+
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
 Version 6 (v6).  xv6 loosely follows the structure and style of v6,
 but is implemented for a modern x86-based multiprocessor using ANSI C.
@@ -47,3 +66,6 @@ will need to install a cross-compiler gcc suite capable of producing
 x86 ELF binaries. See http://pdos.csail.mit.edu/6.828/2016/tools.html.
 Then run "make TOOLPREFIX=i386-jos-elf-". Now install the QEMU PC
 simulator and run "make qemu".
+
+
+
