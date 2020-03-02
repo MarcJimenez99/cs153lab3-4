@@ -77,17 +77,18 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+
   case T_PGFLT:
+    ;
     uint faultAddr = rcr2();
     uint numPages = myproc()->stacksz + 1;
-    uint pgdir = myproc()->pgdir;
     if (faultAddr >= KERNBASE2 - ((PGSIZE*numPages) + 1)) {
-      if(allocuvm(pgdir, PGROUNDDOWN(faultAddr), PGROUNDDOWN(faultAddr) + 1) == 0) {
-	cprintf("allocuvm: Error fault address\n");
-        break;
+      if(allocuvm(myproc()->pgdir, PGROUNDDOWN(faultAddr), PGROUNDDOWN(faultAddr) + 1) == 0) {
+	cprintf("case T_PGFLT from trap.c: allocuvm failed. Number of current allocated pages: %d\n", myproc()->stacksz);
+        exit();
       }
-      myproc()->stackSize = myproc()->stackSize + 1;
-      cprintf("Increased stack size\n");
+      myproc()->stacksz = myproc()->stacksz + 1;
+      cprintf("caseT_PGFLT from trap.c: allocuvm succeeded. Number of pages allocated %d\n", myproc()->stacksz);
       break;
     }
 

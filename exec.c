@@ -68,6 +68,7 @@ exec(char *path, char **argv)
     goto bad;
   //clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
   sp = KERNBASE2;
+  cprintf("Initial number of pages by the process: %d\n", curproc->stacksz);
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {

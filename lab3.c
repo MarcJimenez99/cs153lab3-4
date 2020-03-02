@@ -8,7 +8,7 @@ static int
 recurse(int n)
 {
   if(n == 0)
-    return 0
+    return 0;
   return n + recurse(n - 1);
 }
 #pragma GCC pop_options
