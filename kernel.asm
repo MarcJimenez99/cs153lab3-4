@@ -1264,9 +1264,9 @@ exec(char *path, char **argv)
 80100b3c:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
   end_op();
 80100b40:	e8 4b 20 00 00       	call   80102b90 <end_op>
-  if((stacksz = allocuvm(pgdir, stacksz, stacksz + 8)) == 0)
+  if((stacksz = allocuvm(pgdir, stacksz, stacksz + 1)) == 0)
 80100b45:	8b 85 f0 fe ff ff    	mov    -0x110(%ebp),%eax
-80100b4b:	c7 44 24 08 08 f0 ff 	movl   $0x7ffff008,0x8(%esp)
+80100b4b:	c7 44 24 08 01 f0 ff 	movl   $0x7ffff001,0x8(%esp)
 80100b52:	7f 
 80100b53:	c7 44 24 04 00 f0 ff 	movl   $0x7ffff000,0x4(%esp)
 80100b5a:	7f 
