@@ -7,7 +7,23 @@ and the heap grows toward the high-end of the address space. We are going to cha
 space is: CODE --> HEAP --> STACK. 
 
 In order make this change we need to alter the way xv6 loads the program into memory and sets up the page
-table. This happens in the file, `exec.c` within the `exec(char*, char**)` function. Previously xv6 would allocate two pages with a fixed page size and a second page meant to act as a guard page. This guard page would prevent the stack from growing into the heap by giving the program a memory error to stop it. Since we want the stack to grow down we must now change where the stack is allocated. We will do this by changing
+table. This happens in the file, `exec.c` within the `exec(char*, char**)` function. Previously xv6 would allocate two pages with a fixed page size and a second page meant to act as a guard page. This guard page would prevent the stack from growing into the heap by giving the program a memory error to stop it. Since we want the stack to grow down we must now change where the stack is allocated. In the following picture we have made changes in the section of `exec.c` that handles the allocation of the stack.
+
+**EXEC.cPhoto1**
+
+In order to change it we created a new `uint` variable called `stacksz` that will handle the location of where the stack will be allocated. Previously `sz` was set to `allocuvm()` to ensure that the stack was created at the boundaries of the user code and the heap. To change this we instead used `uint stacksz = KERNBASE - PGSIZE` in order to create the stack above the heap and below the kernel. We then changed the second and third parameter to `stacksz` and `stacksz+1` in order to allocate the first and last page of our pagetable respectively. We want the first page to point to the top of user memory thus being under `KERNBASE` and the last page to be anything larger than the first page since they are virtual addresses. Next we commented out `clearpreu()` since we no longer need a guard page as we want the stack to be able to grow. Finally we will set our `sp` to the top word in the stack page, so we will set it to our own created address, `KERNBASE2`, which is defined in the following picture.
+
+**KERNBASE2**
+
+### b) Helper Functions and copyuvm()
+
+Since we have moved the stack, a few places in the Kernel that hard coded the previous location of the stack need to be changed. These include all the functions that are defined in `syscall.c` and `sysfile.c`. 
+The functions we have changed include:
+
+```
+
+```
+
 
 
 
