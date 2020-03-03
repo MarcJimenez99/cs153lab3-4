@@ -21,8 +21,35 @@ Since we have moved the stack, a few places in the Kernel that hard coded the pr
 The functions we have changed include:
 
 ```
-
+fetchint()
+fetchstr()
+argptr()
 ```
+
+The following pictures depict the changes we made to the previously mentioned functions. 
+
+aa
+aa
+aa
+
+Within all the functions we made changes to all calls that deal with the previous location of the stack. Anywhere the helper functions made calls to `curproc->sz` has been changed to `KERNBASE2` to match the location of our new stack. In addition any call that checked whether an address was out of the stack's set bounds has been changed to compare the address to `KERNBASE2`.
+
+Next we have to make changes to the file `vm.c` in our function `copyuvm()` . This function is used in `fork()` in order to create a copy of the address space of the parent process calling fork to the child process. Previously in only iterated through the bottom of the address space, 0, to `sz`. This worked when the stack was a fixed size but since it now grows we need to make sure we take into account for the number of stack pages. In order to do that we will create a variable within our `struct proc` called `uint stacksz`. We will also now pass in `uint stacksz` in our `copyuvm()` function and thus change all subsequent calls of `copyuvm()` to pass in `curproc()->stacksz`. Finally we need to now iterate through the new stack pages. We do this by creating a similar loop but instead iterate from `KERNBASE2 - PGSIZE + 1` and decrement both `PGSIZE` and `stacksz` until our `stacksz = 0`. This will iterate through the top of the user space down to the current process space. The following pictures show the implementation. 
+
+aa
+aa
+aa
+
+### c) Page faults
+
+Finally we need to take into account of page faults with our growing stack. In order to do that we need to implement our own case for page faults in `trap.c`. In `traps.h` are the defined trap cases. We can see that trap 14 is our set trap for faults. Now that we know that we now need to implement a new trap fault in `trap.c`. In the following photo you can see the case we added which gives us our new page fault.
+
+aaa
+
+To implement the page fault case we checked the address of the faulted page using the `rcr2()` function which gives us the CR2 register. After defining it we then check if the fault address is greater than our `KERNBASE2 - (PGSIZE*numPages) + 1`. After doing so we then check if allocuvm failed at the fault address and the fault address + 1.
+
+### d) Testbench
+
 
 
 
