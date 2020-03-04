@@ -44,7 +44,6 @@ Next we have to make changes to the file `vm.c` in our function `copyuvm()` . Th
 |--------|--------|
 |<img src="https://github.com/MarcJimenez99/cs153lab3-4/blob/master/lab3pictures/lab3execStacksz.JPG">|<img src="https://github.com/MarcJimenez99/cs153lab3-4/blob/master/lab3pictures/lab3copyuvm.JPG">|
 | proc.h | defs.h |
-|--------|--------|
 |<img src="https://github.com/MarcJimenez99/cs153lab3-4/blob/master/lab3pictures/lab3proch.JPG">|<img src="https://github.com/MarcJimenez99/cs153lab3-4/blob/master/lab3pictures/lab3defsh.JPG">|
 
 ### c) Page faults
