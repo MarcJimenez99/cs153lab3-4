@@ -99,7 +99,7 @@ exec(char *path, char **argv)
   curproc->pgdir = pgdir;
   curproc->sz = sz;
   curproc->stacksz = 1;
-  cprintf("\n")
+  cprintf("Initial number of pages by the process: %d\n", curproc->stacksz);
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   switchuvm(curproc);
