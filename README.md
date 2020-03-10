@@ -1,4 +1,4 @@
-# CS153 Lab 3 (Changing Memory Layout and Growing the Stack)
+# CS153 Lab 3 & Lab 4 (Changing Memory Layout & Growing the Stack // Shared Memory)
 ## Lab 3 - Changing Memory Layout and Growing the Stack
 ### a) Changing Memory Layout
 
@@ -71,9 +71,17 @@ The code is a recursive algorithm that allows us to create several pages in orde
 |--------|
 |<img src="https://github.com/MarcJimenez99/cs153lab3-4/blob/master/lab3pictures/lab3testbenchout.JPG">|
 
+## Lab 4 - Shared Memory
+
+### a) shm_cnt.c
+
+`shm_cnt.c` is a user program that shows how when a process forks, both processes open a shared memory segment with the same id using: `shm_open(1, (char **)(&counter))`. Knowing this, the program has each process increment a counter from `1 - 10000`. Afterwards both processes exit using `shm_close(int)`. Currently both `shm_open(1, (char **)(&counter))` and `shm_close(int)` are not implemented thus they do not currently share memory. This leads both functions to just print out seperate `10000(s)` instead of a single `20,000`.
+
+### b) shm_open()
 
 
 
+### c) shm_close()
 
 
 
