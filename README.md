@@ -75,23 +75,47 @@ The code is a recursive algorithm that allows us to create several pages in orde
 
 ### a) shm_cnt.c
 
+SHM_Cnt picture
+
 `shm_cnt.c` is a user program that shows how when a process forks, both processes open a shared memory segment with the same id using: `shm_open(1, (char **)(&counter))`. Knowing this, the program has each process increment a counter from `1 - 10000`. Afterwards both processes exit using `shm_close(int)`. Currently both `shm_open(1, (char **)(&counter))` and `shm_close(int)` are not implemented thus they do not currently share memory. This leads both functions to just print out seperate `10000(s)` instead of a single `20,000`.
 
-In order to implement this update to our `shm_cnt.c`, we will first update the `shm_open()` system call. In order to update the system call we will have to make changes on how `shm_open()` interacts with our shared memory table. This table is defined as a struct within our `shm.c` file.
+In order to implement this update to our `shm_cnt.c`, we will first update the `shm_open()` system call. In order to update the system call we will have to make changes on how `shm_open()` interacts with our shared memory table. The table contains three variables known as the ID, frame, and the reference count. This table is defined as a struct within our `shm.c` file.
 
 Picture of SHM TABLE
 
-The table is defined by three variables known as the ID, frame, and the reference count. Their functions are defined in the following photo
+These three variables are defined as such:
 
-Photo of ID/FRAME/REFCNT
+three id
 
 ### b) shm_open()
 
-`shm_open()` can be categorizied into two different cases.
+`shm_open()` is how our processes will identify whether or not the page they are attempting to access already exists or not. We do this by iterating through the shared memory table and checking if any of the page IDs match the ID we are passing in. If we do find a match then our variable found is set to 1, else, it stays 0. This can be categorizied into two different cases. The following picture shows the implentation:
 
-#### Case 1
+Full picture
+
+#### Case 1:
+
+If we find that `found = 1` then we know the segment ID the process is attempting to open already exists then we know another process has already done a `shm_open` before us. This means we just need to map the virtual address space of our process to the physical address space of the shared memory table. The following picture shows the implementation:
+
+Picture of Case 1 implementation
+
+We will also increment the refcnt of the shared memory page as now there is an additional process using it. Next we will reinitialize the pointer to point to the virtual address. Afterwards we will update the `sz` by a `PGSIZE` due to us increasing the size of its stack. Finally we will release the `shm_table` lock and `return 0`.
+
+#### Case 2: 
+
+If we find that after iterating through the shared memory table that `found = 0` then we know that we are the first process to do `shm_open()` on this segment. We will now have to find an empty entry in the `shm_table`. We do this by finding an entry with `refcnt = 0`. Once finding a suitable entry we will initialize its ID to the ID passed in. We will also then kmalloc a page and store its address in frame. We do this by creating a `char *mem` and using `memset()` to initialize it. After doing so we will then set the empty entry in our `shm_table` to `mem`. We will then initialize `refcnt` to equal `1` and do similiar final steps as we did in `Case 1`. The following picture shows the implementation:
+
+picture of Case2
 
 ### c) shm_close()
+
+`shm_close` will simply decrement the `refcnt` of a page in our `shm_table` as a process is terminated. We do this by finding the shared memory segment and decrememtning the `refcnt` only if it is greater than or equal to 1. If it is 0 then we will simply set its ID to 0 and `kfree()` its memory frame. The following picture shows the implementation:
+
+a
+
+### d) shm_cnt.c With Updates
+
+After making our updates we can see the counters will now take into consideration the incrementation by both processes. This lets us reach the target of `20,000`. The output can be seen in the following picture.
 
 
 
