@@ -77,9 +77,19 @@ The code is a recursive algorithm that allows us to create several pages in orde
 
 `shm_cnt.c` is a user program that shows how when a process forks, both processes open a shared memory segment with the same id using: `shm_open(1, (char **)(&counter))`. Knowing this, the program has each process increment a counter from `1 - 10000`. Afterwards both processes exit using `shm_close(int)`. Currently both `shm_open(1, (char **)(&counter))` and `shm_close(int)` are not implemented thus they do not currently share memory. This leads both functions to just print out seperate `10000(s)` instead of a single `20,000`.
 
+In order to implement this update to our `shm_cnt.c`, we will first update the `shm_open()` system call. In order to update the system call we will have to make changes on how `shm_open()` interacts with our shared memory table. This table is defined as a struct within our `shm.c` file.
+
+Picture of SHM TABLE
+
+The table is defined by three variables known as the ID, frame, and the reference count. Their functions are defined in the following photo
+
+Photo of ID/FRAME/REFCNT
+
 ### b) shm_open()
 
+`shm_open()` can be categorizied into two different cases.
 
+#### Case 1
 
 ### c) shm_close()
 
